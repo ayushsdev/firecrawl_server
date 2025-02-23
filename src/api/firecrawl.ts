@@ -20,35 +20,48 @@ export async function crawl(params: {
         limit: params.limit ?? 50,
         webhook: {
             url: process.env.WEBHOOK_URL,
-            // events: ['crawl.page'],
             metadata: {
                 course_name: params.project_name
             }
         }
     };
-    // console.log('Firecrawl API request:', { url, payload });
     
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+    console.log('Making Firecrawl API request:', {
+        url,
+        payload,
+        webhookUrl: process.env.WEBHOOK_URL
     });
 
-    // Better error handling
-    if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Firecrawl API error:', {
-            status: response.status,
-            statusText: response.statusText,
-            error: errorData
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
         });
-        throw new Error(`Firecrawl API error: ${response.status} ${response.statusText}`);
-    }
 
-    const data = await response.json();
-    return { ...data, crawlId: data.id };
+        // Better error handling
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Firecrawl API error:', {
+                status: response.status,
+                statusText: response.statusText,
+                error: errorData
+            });
+            throw new Error(`Firecrawl API error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return { ...data, crawlId: data.id };
+    } catch (error) {
+        console.error('Fetch error details:', {
+            error,
+            firecrawlUrl: url,
+            webhookUrl: process.env.WEBHOOK_URL
+        });
+        throw error;
+    }
 }   
 
 
