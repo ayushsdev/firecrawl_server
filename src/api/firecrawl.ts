@@ -24,10 +24,10 @@ export async function crawl(params: {
                 course_name: params.project_name
             }
         },
-        scrapeOptions: {
-            timeout: 10000,
-            waitFor: 500
-        }
+        // scrapeOptions: {
+        //     timeout: 10000,
+        //     waitFor: 500
+        // }
     };
     
     console.log('Making Firecrawl API request:', {
