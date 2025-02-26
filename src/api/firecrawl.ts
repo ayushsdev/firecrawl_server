@@ -23,6 +23,10 @@ export async function crawl(params: {
             metadata: {
                 course_name: params.project_name
             }
+        },
+        scrapeOptions: {
+            timeout: 10000,
+            waitFor: 500
         }
     };
     
